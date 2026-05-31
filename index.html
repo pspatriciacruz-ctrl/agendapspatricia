@@ -927,9 +927,16 @@ textarea{resize:vertical;min-height:78px}
           <label for="fecha">Fecha *</label>
           <input type="date" id="fecha"/>
         </div>
-        <div class="field">
-          <label for="hora">Hora *</label>
-          <input type="time" id="hora"/>
+        <div class="field" style="grid-column:1/-1">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;flex-wrap:wrap;gap:0.5rem;">
+            <label for="hora" style="margin-bottom:0">Hora *</label>
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:400;color:var(--ink-light);text-transform:none;letter-spacing:0;cursor:pointer;">
+              <input type="checkbox" id="horario-extra" onchange="toggleHorarioExtra()" style="width:14px;height:14px;accent-color:var(--sage-dark);cursor:pointer;border-radius:3px;"/>
+              Habilitar horario extraordinario
+            </label>
+          </div>
+          <input type="time" id="hora" min="08:00" max="20:00"/>
+          <p id="hora-aviso" style="font-size:0.72rem;color:var(--ink-light);margin-top:0.3rem;font-style:italic;">Horario habitual: 08:00 — 20:00 hrs.</p>
         </div>
         <div class="field">
           <label for="tipo">Tipo de consulta *</label>
@@ -1120,7 +1127,7 @@ async function guardarCita(cita){
 ──────────────────────── */
 async function eliminarCitaDB(id){
   // SheetDB plan gratuito: DELETE sin headers extra para evitar bloqueo CORS
-  const r = await fetch(`${SHEETDB_URL}/id/${encodeURIComponent(id)}`, {
+  const r = await fetch(`${SHEETDB_URL}/cita_id/${encodeURIComponent(id)}`, {
     method: 'DELETE'
   });
   if(!r.ok){
@@ -1208,6 +1215,27 @@ function cambiarTab(tab, btn){
 }
 
 /* ════════════════════
+   HORARIO EXTRAORDINARIO
+════════════════════ */
+function toggleHorarioExtra(){
+  const cb    = document.getElementById('horario-extra');
+  const hora  = document.getElementById('hora');
+  const aviso = document.getElementById('hora-aviso');
+  if(cb.checked){
+    hora.removeAttribute('min');
+    hora.removeAttribute('max');
+    aviso.textContent = '⚠ Horario extraordinario habilitado — sin restricción de horas.';
+    aviso.style.color = 'var(--danger)';
+  } else {
+    hora.setAttribute('min','08:00');
+    hora.setAttribute('max','20:00');
+    hora.value = '';
+    aviso.textContent = 'Horario habitual: 08:00 — 20:00 hrs.';
+    aviso.style.color = 'var(--ink-light)';
+  }
+}
+
+/* ════════════════════
    AGENDAR
 ════════════════════ */
 async function agendarPaciente(){
@@ -1228,11 +1256,21 @@ async function agendarPaciente(){
     return;
   }
 
+  // Validar rango horario si no está habilitado horario extraordinario
+  const horarioExtra = document.getElementById('horario-extra').checked;
+  if(!horarioExtra){
+    const [hh] = hora.split(':').map(Number);
+    if(hh < 8 || hh >= 20){
+      mostrarToast('⚠ La hora debe estar entre las 08:00 y las 20:00 hrs.');
+      return;
+    }
+  }
+
   const btnA = document.getElementById('btn-agendar');
   btnA.disabled=true; btnA.textContent='Agendando...';
 
   const cita = {
-    "id":        Date.now().toString(),
+    "cita_id":    Date.now().toString(),
     "nombre":    nombre,
     "apellido":  apellido,
     "nick":      nick,
@@ -1274,7 +1312,7 @@ async function eliminarCita(id){
   try {
     await eliminarCitaDB(id);
     // borrar de la memoria local
-    citas = citas.filter(c => String(c.id) !== String(id));
+    citas = citas.filter(c => String(c.cita_id) !== String(id));
     // actualizar interfaz: lista y calendario
     renderLista();
     renderCalendarioAdmin();
@@ -1314,7 +1352,7 @@ function renderLista(){
         <span class="badge">${ci.tipo}${ci.prevision?' · '+ci.prevision:''}</span>
       </div>
       <div class="apt-actions">
-        <button data-eliminar-id="${ci.id}" onclick="eliminarCita('${ci.id}')">Eliminar</button>
+        <button data-eliminar-id="${ci.cita_id}" onclick="eliminarCita('${ci.cita_id}')">Eliminar</button>
       </div>
     </div>`;
   }).join('');
@@ -1642,6 +1680,9 @@ function limpiarFormulario(){
     .forEach(id=>document.getElementById(id).value='');
   document.getElementById('tipo').value='';
   document.getElementById('prevision').value='';
+  // resetear horario extraordinario
+  const cb = document.getElementById('horario-extra');
+  if(cb){ cb.checked=false; toggleHorarioExtra(); }
 }
 
 function mostrarToast(msg){
