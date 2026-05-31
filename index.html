@@ -1119,10 +1119,9 @@ async function guardarCita(cita){
    SHEETDB — ELIMINAR
 ──────────────────────── */
 async function eliminarCitaDB(id){
-  // SheetDB: DELETE /column/value — la columna se llama "id"
+  // SheetDB plan gratuito: DELETE sin headers extra para evitar bloqueo CORS
   const r = await fetch(`${SHEETDB_URL}/id/${encodeURIComponent(id)}`, {
-    method: 'DELETE',
-    headers: { 'Content-Type': 'application/json' }
+    method: 'DELETE'
   });
   if(!r.ok){
     const texto = await r.text().catch(()=>'');
