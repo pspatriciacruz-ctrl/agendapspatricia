@@ -927,7 +927,7 @@ textarea{resize:vertical;min-height:78px}
           <label for="fecha">Fecha *</label>
           <input type="date" id="fecha"/>
         </div>
-        <div class="field" style="grid-column:1/-1">
+        <div class="field">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.4rem;flex-wrap:wrap;gap:0.5rem;">
             <label for="hora" style="margin-bottom:0">Hora *</label>
             <label style="display:flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:400;color:var(--ink-light);text-transform:none;letter-spacing:0;cursor:pointer;">
@@ -935,7 +935,9 @@ textarea{resize:vertical;min-height:78px}
               Habilitar horario extraordinario
             </label>
           </div>
-          <input type="time" id="hora" min="08:00" max="20:00"/>
+          <select id="hora">
+            <option value="">Seleccionar hora...</option>
+          </select>
           <p id="hora-aviso" style="font-size:0.72rem;color:var(--ink-light);margin-top:0.3rem;font-style:italic;">Horario habitual: 08:00 — 20:00 hrs.</p>
         </div>
         <div class="field">
@@ -1217,19 +1219,41 @@ function cambiarTab(tab, btn){
 /* ════════════════════
    HORARIO EXTRAORDINARIO
 ════════════════════ */
+const HORAS_HABITUALES = ["08:00", "08:15", "08:30", "08:45", "09:00", "09:15", "09:30", "09:45", "10:00", "10:15", "10:30", "10:45", "11:00", "11:15", "11:30", "11:45", "12:00", "12:15", "12:30", "12:45", "13:00", "13:15", "13:30", "13:45", "14:00", "14:15", "14:30", "14:45", "15:00", "15:15", "15:30", "15:45", "16:00", "16:15", "16:30", "16:45", "17:00", "17:15", "17:30", "17:45", "18:00", "18:15", "18:30", "18:45", "19:00", "19:15", "19:30", "19:45", "20:00"];
+const HORAS_EXTRA      = ["00:00", "00:15", "00:30", "00:45", "01:00", "01:15", "01:30", "01:45", "02:00", "02:15", "02:30", "02:45", "03:00", "03:15", "03:30", "03:45", "04:00", "04:15", "04:30", "04:45", "05:00", "05:15", "05:30", "05:45", "06:00", "06:15", "06:30", "06:45", "07:00", "07:15", "07:30", "07:45", "20:15", "20:30", "20:45", "21:15", "21:30", "21:45", "22:15", "22:30", "22:45", "23:15", "23:30", "23:45"];
+
+function poblarSelectorHora(incluirExtra){
+  const sel = document.getElementById('hora');
+  const valorActual = sel.value;
+  sel.innerHTML = '<option value="">Seleccionar hora...</option>';
+  HORAS_HABITUALES.forEach(h => {
+    const opt = document.createElement('option');
+    opt.value = h; opt.textContent = h;
+    sel.appendChild(opt);
+  });
+  if(incluirExtra){
+    const sep = document.createElement('option');
+    sep.disabled = true; sep.textContent = '── Horario extraordinario ──';
+    sel.appendChild(sep);
+    HORAS_EXTRA.forEach(h => {
+      const opt = document.createElement('option');
+      opt.value = h; opt.textContent = h;
+      sel.appendChild(opt);
+    });
+  }
+  // restaurar valor si sigue siendo válido
+  if(valorActual) sel.value = valorActual;
+}
+
 function toggleHorarioExtra(){
   const cb    = document.getElementById('horario-extra');
-  const hora  = document.getElementById('hora');
   const aviso = document.getElementById('hora-aviso');
+  poblarSelectorHora(cb.checked);
   if(cb.checked){
-    hora.removeAttribute('min');
-    hora.removeAttribute('max');
-    aviso.textContent = '⚠ Horario extraordinario habilitado — sin restricción de horas.';
+    aviso.textContent = '⚠ Horario extraordinario habilitado.';
     aviso.style.color = 'var(--danger)';
   } else {
-    hora.setAttribute('min','08:00');
-    hora.setAttribute('max','20:00');
-    hora.value = '';
+    document.getElementById('hora').value = '';
     aviso.textContent = 'Horario habitual: 08:00 — 20:00 hrs.';
     aviso.style.color = 'var(--ink-light)';
   }
@@ -1256,15 +1280,6 @@ async function agendarPaciente(){
     return;
   }
 
-  // Validar rango horario si no está habilitado horario extraordinario
-  const horarioExtra = document.getElementById('horario-extra').checked;
-  if(!horarioExtra){
-    const [hh] = hora.split(':').map(Number);
-    if(hh < 8 || hh >= 20){
-      mostrarToast('⚠ La hora debe estar entre las 08:00 y las 20:00 hrs.');
-      return;
-    }
-  }
 
   const btnA = document.getElementById('btn-agendar');
   btnA.disabled=true; btnA.textContent='Agendando...';
@@ -1682,7 +1697,9 @@ function limpiarFormulario(){
   document.getElementById('prevision').value='';
   // resetear horario extraordinario
   const cb = document.getElementById('horario-extra');
-  if(cb){ cb.checked=false; toggleHorarioExtra(); }
+  if(cb){ cb.checked=false; poblarSelectorHora(false); }
+  const aviso = document.getElementById('hora-aviso');
+  if(aviso){ aviso.textContent='Horario habitual: 08:00 — 20:00 hrs.'; aviso.style.color='var(--ink-light)'; }
 }
 
 function mostrarToast(msg){
@@ -1709,6 +1726,7 @@ document.getElementById('modal-login').addEventListener('click',function(e){
 });
 
 // inicio
+poblarSelectorHora(false);
 mostrarSolo('landing');
 </script>
 </body>
