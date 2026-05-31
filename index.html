@@ -1231,8 +1231,20 @@ async function agendarPaciente(){
   const btnA = document.getElementById('btn-agendar');
   btnA.disabled=true; btnA.textContent='Agendando...';
 
-  const id   = Date.now().toString();
-  const cita = { id, nombre, apellido, nick, rut, telefono, email, fecha, hora, tipo, prevision, notas };
+  const cita = {
+    "id":        Date.now().toString(),
+    "nombre":    nombre,
+    "apellido":  apellido,
+    "nick":      nick,
+    "rut":       rut,
+    "telefono":  telefono,
+    "email":     email,
+    "fecha":     fecha,
+    "hora":      hora,
+    "tipo":      tipo,
+    "prevision": prevision,
+    "notas":     notas
+  };
 
   try {
     await guardarCita(cita);
