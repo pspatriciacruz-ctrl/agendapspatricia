@@ -2,8 +2,18 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Agenda — Ps. Patricia Cruz Oteíza</title>
+
+<!-- PWA / icono pantalla principal -->
+<meta name="application-name" content="Agenda Patricia Cruz"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Ps. Patricia"/>
+<meta name="theme-color" content="#2E3D35"/>
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxOTIgMTkyIj48cmVjdCB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgcng9IjM4IiBmaWxsPSIjMkUzRDM1Ii8+PGxpbmUgeDE9Ijk2IiB5MT0iMTYwIiB4Mj0iOTYiIHkyPSI1MCIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNzUpIiBzdHJva2Utd2lkdGg9IjMuNSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTk2IDc0IEM4MiA2NCA2MCA2NiA1NiA3OCBDNjggODEgODMgNzggOTYgNzRaIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuNTUpIi8+PHBhdGggZD0iTTk2IDc0IEMxMTAgNjQgMTMyIDY2IDEzNiA3OCBDMTI0IDgxIDEwOSA3OCA5NiA3NFoiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC40NSkiLz48cGF0aCBkPSJNOTYgMTAxIEM4MCA5MiA1OCA5MyA1NiAxMDYgQzY4IDEwOCA4MyAxMDUgOTYgMTAxWiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjYpIi8+PHBhdGggZD0iTTk2IDEwMSBDMTEyIDkyIDEzNCA5MyAxMzYgMTA2IEMxMjQgMTA4IDEwOSAxMDUgOTYgMTAxWiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjUpIi8+PGNpcmNsZSBjeD0iOTYiIGN5PSI0NCIgcj0iNyIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjcpIi8+PC9zdmc+"/>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='38' fill='%232E3D35'/><line x1='96' y1='160' x2='96' y2='50' stroke='rgba(255,255,255,0.75)' stroke-width='3.5' stroke-linecap='round'/><path d='M96 74 C82 64 60 66 56 78 C68 81 83 78 96 74Z' fill='rgba(255,255,255,0.55)'/><path d='M96 74 C110 64 132 66 136 78 C124 81 109 78 96 74Z' fill='rgba(255,255,255,0.45)'/><path d='M96 101 C80 92 58 93 56 106 C68 108 83 105 96 101Z' fill='rgba(255,255,255,0.6)'/><path d='M96 101 C112 92 134 93 136 106 C124 108 109 105 96 101Z' fill='rgba(255,255,255,0.5)'/><circle cx='96' cy='44' r='7' fill='rgba(255,255,255,0.7)'/></svg>"/>
+
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -497,7 +507,7 @@ textarea{resize:vertical;min-height:78px}
 }
 .week-nav button:hover{background:var(--sage-wash)}
 
-/* cuadro semana */
+/* cuadro semana — escritorio */
 .week-grid-wrap{
   width:100%;max-width:900px;
   overflow-x:auto;
@@ -508,8 +518,53 @@ textarea{resize:vertical;min-height:78px}
   border:1px solid var(--stone-mid);
   border-radius:var(--radius);
   overflow:hidden;
-  min-width:540px;
+  min-width:600px;
   box-shadow:var(--shadow-sm);
+}
+
+/* vista semanal móvil — lista vertical por día */
+.week-mobile{display:none;width:100%;max-width:900px}
+.wm-day-block{
+  background:var(--white);border:1px solid var(--stone-mid);
+  border-radius:var(--radius);margin-bottom:0.6rem;
+  overflow:hidden;box-shadow:var(--shadow-sm);
+}
+.wm-day-header{
+  background:var(--sage-dark);
+  padding:0.55rem 1rem;
+  display:flex;align-items:baseline;gap:0.5rem;
+}
+.wm-day-header.today-hdr{background:var(--sage-mid)}
+.wm-day-name{
+  font-size:0.7rem;font-weight:400;letter-spacing:1.2px;
+  text-transform:uppercase;color:rgba(255,255,255,0.7);
+}
+.wm-day-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.25rem;font-weight:400;color:var(--white);line-height:1;
+}
+.wm-slots{padding:0.4rem 0}
+.wm-slot{
+  display:flex;align-items:center;
+  padding:0.35rem 1rem;
+  border-bottom:1px solid var(--stone-mid);
+  gap:0.75rem;
+}
+.wm-slot:last-child{border-bottom:none}
+.wm-slot.past-slot{opacity:0.5}
+.wm-hora{
+  font-size:0.75rem;font-weight:400;color:var(--ink-light);
+  min-width:38px;flex-shrink:0;
+}
+.wm-evento{
+  background:var(--sage-dark);color:var(--white);
+  border-radius:5px;padding:3px 9px;
+  font-size:0.82rem;
+  font-family:'Cormorant Garamond',serif;
+  font-weight:400;
+}
+.wm-libre{
+  font-size:0.75rem;color:var(--stone-dark);font-weight:300;font-style:italic;
 }
 
 /* cabecera días */
@@ -689,18 +744,58 @@ textarea{resize:vertical;min-height:78px}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ════════════════════════════════
-   RESPONSIVE
+   RESPONSIVE — tablets y móvil
 ════════════════════════════════ */
-@media(max-width:600px){
-  .row{grid-template-columns:1fr}
-  .card{padding:1.25rem}
-  .cal-cell{min-height:52px}
-  .cal-event{font-size:0.57rem}
-  .pub-cal-cell{min-height:56px}
+@media(max-width:768px){
+  .topbar{flex-wrap:wrap}
+  .pub-header{flex-direction:column;align-items:flex-start;gap:0.75rem}
 }
+
+@media(max-width:600px){
+  /* formulario */
+  .row{grid-template-columns:1fr}
+  .card{padding:1.1rem}
+  .btn-group{justify-content:stretch}
+  .btn-group .btn{flex:1;text-align:center}
+
+  /* landing */
+  .landing-name{font-size:1.7rem}
+  .landing-btns{max-width:100%}
+  .land-btn{font-size:0.97rem;padding:1rem 1.2rem}
+
+  /* tabs */
+  .tab-btn{font-size:0.78rem;padding:0.65rem 0.3rem}
+
+  /* topbar */
+  .tb-info h1{font-size:1rem}
+  .tb-info p{font-size:0.68rem}
+
+  /* calendario admin */
+  .cal-cell{min-height:48px;padding:3px}
+  .cal-event{font-size:0.55rem;padding:1px 3px}
+  .cal-day-header{font-size:0.62rem;letter-spacing:0}
+
+  /* calendario público mensual */
+  .pub-cal-cell{min-height:52px;padding:3px}
+  .pub-cal-event{font-size:0.68rem;padding:1px 3px}
+  .pub-cal-day-hdr{font-size:0.62rem;letter-spacing:0}
+
+  /* vista semanal: ocultar grilla, mostrar lista vertical */
+  .week-grid-wrap{display:none}
+  .week-mobile{display:block}
+
+  /* lista citas */
+  .apt-nick{font-size:1rem}
+  .apt-details{font-size:0.82rem}
+
+  /* modal */
+  .modal-box{padding:2rem 1.25rem}
+}
+
 @media(max-width:400px){
-  .cal-day-header,.pub-cal-day-hdr{font-size:0.58rem}
-  .cal-cell,.pub-cal-cell{min-height:44px;padding:3px}
+  .cal-day-header,.pub-cal-day-hdr{font-size:0.56rem}
+  .cal-cell,.pub-cal-cell{min-height:40px;padding:2px}
+  .landing-name{font-size:1.5rem}
 }
 </style>
 </head>
@@ -929,9 +1024,12 @@ textarea{resize:vertical;min-height:78px}
       <h3 id="week-titulo"></h3>
       <button onclick="cambiarSemana(1)">&#8594;</button>
     </div>
+    <!-- grilla desktop -->
     <div class="week-grid-wrap">
       <div class="week-grid" id="week-grid"></div>
     </div>
+    <!-- lista vertical móvil -->
+    <div class="week-mobile" id="week-mobile"></div>
   </div>
 
   <!-- VISTA MENSUAL -->
@@ -976,9 +1074,9 @@ textarea{resize:vertical;min-height:78px}
    ADMIN_EMAIL: correo del administrador (no cambiar)
    ADMIN_PASS:  Contraseña local de acceso (define una aquí)
    ═══════════════════════════════════════════ */
-const SHEETDB_URL  = "https://sheetdb.io/api/v1/TU_API_ID";  // ← reemplazar
+const SHEETDB_URL  = "https://sheetdb.io/api/v1/hej0in4kk72dy";
 const ADMIN_EMAIL  = "ps.patriciacruz@gmail.com";
-const ADMIN_PASS   = "TU_CONTRASEÑA_AQUI";                    // ← reemplazar
+const ADMIN_PASS   = "mspmp.8651";
 /* ═══════════════════════════════════════════ */
 
 let citas      = [];
@@ -1316,12 +1414,8 @@ function renderSemana(){
   const hoy=new Date(); hoy.setHours(0,0,0,0);
   const limite=new Date(hoy); limite.setFullYear(limite.getFullYear()+1);
 
-  // no permitir ir antes de hoy
-  if(semanaBase < hoy){
-    semanaBase=obtenerLunesDeHoy();
-  }
+  if(semanaBase < hoy) semanaBase=obtenerLunesDeHoy();
 
-  // construir los 7 días de la semana
   const dias=[];
   for(let i=0;i<7;i++){
     const d=new Date(semanaBase);
@@ -1329,15 +1423,14 @@ function renderSemana(){
     dias.push(d);
   }
 
-  // título semana
   const ini=dias[0]; const fin=dias[6];
-  document.getElementById('week-titulo').textContent =
-    `${ini.getDate()} ${MESES_ES[ini.getMonth()]} — ${fin.getDate()} ${MESES_ES[fin.getMonth()]} ${fin.getFullYear()}`;
+  const tituloSemana=`${ini.getDate()} ${MESES_ES[ini.getMonth()]} — ${fin.getDate()} ${MESES_ES[fin.getMonth()]} ${fin.getFullYear()}`;
+  document.getElementById('week-titulo').textContent = tituloSemana;
 
+  /* ── DESKTOP: grilla ── */
   const grid=document.getElementById('week-grid');
   grid.innerHTML='';
 
-  // cabecera — celda vacía para columna de horas
   const thVacio=document.createElement('div');
   thVacio.className='wg-head';grid.appendChild(thVacio);
 
@@ -1350,9 +1443,7 @@ function renderSemana(){
     grid.appendChild(th);
   });
 
-  // filas por hora
   HORAS_AGENDA.forEach(hora=>{
-    // celda hora
     const tdHora=document.createElement('div');
     tdHora.className='wg-time';tdHora.textContent=hora;
     grid.appendChild(tdHora);
@@ -1364,16 +1455,13 @@ function renderSemana(){
       const cell=document.createElement('div');
       cell.className='wg-cell'+(esHoy?' today-col':'')+(esPasado?' past':'');
 
-      // buscar citas que coincidan (hora exacta o dentro del rango)
       const citasDia=citas.filter(c=>{
         if(c.fecha!==fechaStr) return false;
-        // mostrar si la hora de la cita coincide con la franja
         return c.hora && c.hora.startsWith(hora.split(':')[0].padStart(2,'0'));
       });
 
       if(citasDia.length){
         citasDia.forEach(c=>{
-          // Solo mostrar si está dentro del rango (hoy → +1 año)
           const fechaCita=new Date(c.fecha+'T12:00');
           if(fechaCita>=hoy && fechaCita<=limite){
             const ev=document.createElement('div');
@@ -1386,6 +1474,64 @@ function renderSemana(){
       }
       grid.appendChild(cell);
     });
+  });
+
+  /* ── MÓVIL: lista vertical por día ── */
+  const mob=document.getElementById('week-mobile');
+  mob.innerHTML='';
+
+  dias.forEach(d=>{
+    const esHoy=d.toDateString()===hoy.toDateString();
+    const esPasado=d<hoy;
+    const fechaStr=d.toISOString().split('T')[0];
+
+    const block=document.createElement('div');
+    block.className='wm-day-block';
+
+    // cabecera del día
+    const hdr=document.createElement('div');
+    hdr.className='wm-day-header'+(esHoy?' today-hdr':'');
+    hdr.innerHTML=`<span class="wm-day-name">${DIAS_ES[d.getDay()]}</span>
+      <span class="wm-day-num">${d.getDate()} ${MESES_ES[d.getMonth()]}</span>`;
+    block.appendChild(hdr);
+
+    // slots horarios
+    const slots=document.createElement('div');
+    slots.className='wm-slots';
+
+    HORAS_AGENDA.forEach(hora=>{
+      const citasHora=citas.filter(c=>{
+        if(c.fecha!==fechaStr) return false;
+        return c.hora && c.hora.startsWith(hora.split(':')[0].padStart(2,'0'));
+      }).filter(c=>{
+        const fc=new Date(c.fecha+'T12:00');
+        return fc>=hoy && fc<=limite;
+      });
+
+      const slot=document.createElement('div');
+      slot.className='wm-slot'+(esPasado?' past-slot':'');
+
+      const horaSpan=document.createElement('span');
+      horaSpan.className='wm-hora';horaSpan.textContent=hora;
+      slot.appendChild(horaSpan);
+
+      if(citasHora.length){
+        citasHora.forEach(c=>{
+          const ev=document.createElement('span');
+          ev.className='wm-evento';
+          ev.textContent=c.nick||'—';
+          slot.appendChild(ev);
+        });
+      } else {
+        const libre=document.createElement('span');
+        libre.className='wm-libre';libre.textContent='disponible';
+        slot.appendChild(libre);
+      }
+      slots.appendChild(slot);
+    });
+
+    block.appendChild(slots);
+    mob.appendChild(block);
   });
 }
 
